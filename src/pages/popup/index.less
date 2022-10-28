@@ -1,0 +1,114 @@
+body {
+  background: #f1efef;
+  #root {
+    width: 300px;
+    height: 400px;
+    margin: 20px;
+    margin-bottom: 50px;
+    .popup-header {
+      margin-bottom: 20px;
+      .header-button {
+        margin-left: 20px;
+        border-radius: 50%;
+      }
+    }
+    .back {
+      margin-bottom: 15px;
+      img {
+        width: 22px;
+        height: 22px;
+        margin-right: 4px;
+        vertical-align: middle;
+        cursor: pointer;
+      }
+      .back-tag {
+        cursor: pointer;
+        &:hover {
+          color: rgb(80, 79, 79);
+          background: #cfd5e6;
+        }
+        .semi-icon-default {
+          font-size: 14px;
+        }
+        .semi-icon {
+          margin-right: 5px;
+        }
+      }
+    }
+    .popup-container {
+      width: 100%;
+      height: 95%;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      overflow: scroll;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      .bookmark-item-search {
+        width: 98%;
+        height: 42px;
+        margin-bottom: 12px;
+        line-height: 42px;
+      }
+      .bookmark-item {
+        width: 46%;
+        height: 42px;
+        margin-bottom: 12px;
+        line-height: 42px;
+      }
+      .semi-card-body {
+        &:hover {
+          .semi-card-meta-wrapper-title {
+            color: #3b6094;
+          }
+        }
+      }
+      .semi-card-meta-avatar {
+        margin-right: 0;
+      }
+      .semi-avatar > img {
+        width: 55%;
+        height: 55%;
+      }
+      .semi-card-meta-wrapper {
+        width: 80%;
+      }
+      .semi-card-meta-wrapper-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #3a4759;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+.detail-modal {
+  width: 100%;
+  height: 100%;
+  .semi-modal-small {
+    width: 90% !important;
+  }
+}
+
+.semi-backtop {
+  right: 0px;
+}
+.bottom-sheet {
+  .bottom-sheet-btns {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
+.no-url {
+  font-size: 12px;
+  color: rgb(237, 127, 127);
+  margin-top: 4px;
+  
+}

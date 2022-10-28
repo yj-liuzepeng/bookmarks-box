@@ -1,0 +1,40 @@
+{
+  "name": "bookmarks-box",
+  "private": true,
+  "version": "0.0.15",
+  "type": "module",
+  "description": "提高对书签的便捷管理，支持对书签的增删改查",
+  "scripts": {
+    "dev": "vite",
+    "build": "zx ./build.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@douyinfe/semi-icons": "^2.21.2",
+    "@douyinfe/semi-ui": "^2.21.2",
+    "@popperjs/core": "^2.11.6",
+    "array-move": "^4.0.0",
+    "path": "^0.12.7",
+    "pinyin-match": "^1.2.2",
+    "react": "^18.2.0",
+    "react-copy-to-clipboard": "^5.1.0",
+    "react-dom": "^18.2.0",
+    "react-sortable-hoc": "^2.0.0",
+    "zx": "^7.1.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "^null99",
+    "@types/node": "^18.11.3",
+    "@types/react": "^18.0.17",
+    "@types/react-copy-to-clipboard": "^5.0.4",
+    "@types/react-dom": "^18.0.6",
+    "@types/semver": "^7.3.12",
+    "@vitejs/plugin-react": "^2.1.0",
+    "less": "^4.1.3",
+    "nodemon": "^2.0.20",
+    "semver": "^7.3.7",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0",
+    "vite-plugin-imp": "^2.3.0"
+  }
+}
