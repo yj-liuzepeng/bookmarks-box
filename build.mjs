@@ -3,7 +3,6 @@
 const semverInc = require('semver/functions/inc')
 const packageJson = require('./package.json');
 
-// let {version} = await fs.readJson('./package.json')
 
 console.log(
   chalk.yellow.bold(`Current verion: ${packageJson.version}`)
@@ -41,4 +40,4 @@ await $`tsc && vite build`
 // await $`git push origin HEAD:refs/for/master`
 
 // 压缩
-await $`zip -q -r bundle.zip ./dist`
+await $`zip -q -r bookmarks-box.zip ./dist`

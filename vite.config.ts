@@ -33,7 +33,8 @@ export default defineConfig({
         background: resolve(pagesDir, "background", "index.ts"),
       },
       output: {
-        entryFileNames: "src/pages/[name]/index.js",
+        // entryFileNames: "src/pages/[name]/index.js",
+        entryFileNames: "[name].js",
         chunkFileNames: isDev
           ? "assets/js/[name].js"
           : "assets/js/[name].[hash].js",

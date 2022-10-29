@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Button, Card, Popover, Avatar, Input, BackTop, Tag, SideSheet, Modal } from '@douyinfe/semi-ui';
 import { IconFolderOpen, IconPlus, IconArrowUp, IconAlertTriangle } from '@douyinfe/semi-icons';
+import Img from './MyImg'
 import DetailModal from './DetailModal'
 import EditModal from './EditModal'
 import PinyinMatch from 'pinyin-match'
@@ -314,9 +315,9 @@ const Popup: React.FC = () => {
                 <Avatar
                   alt='网站'
                   size="default"
-                  src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : 'https://liuzepeng.com/web.png'}
-                // src={('http://www.google.com/s2/favicons?domain=' + item.url) || 'https://liuzepeng.com/web.png'}
-                />
+                >
+                  <Img src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : 'https://liuzepeng.com/web.png'} />
+                </Avatar>
               }
             />
           }
@@ -358,8 +359,9 @@ const Popup: React.FC = () => {
                 <Avatar
                   alt='网站'
                   size="default"
-                  src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : 'https://liuzepeng.com/web.png'}
-                />
+                >
+                  <Img src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : 'https://liuzepeng.com/web.png'} />
+                </Avatar>
               }
             />
           }
