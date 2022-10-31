@@ -1,7 +1,7 @@
 {
   "name": "bookmarks-box",
   "private": true,
-  "version": "0.0.17",
+  "version": "0.0.7",
   "type": "module",
   "description": "提高对书签的便捷管理，支持对书签的增删改查",
   "scripts": {

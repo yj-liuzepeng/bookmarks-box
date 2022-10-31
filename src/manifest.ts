@@ -36,11 +36,7 @@ const manifest: ManifestType = {
     },
   ],
   permissions: [
-    "storage",
     "activeTab",
-    "scripting",
-    "contextMenus",
-    "notifications",
     "bookmarks",
     "tabs"
   ],
