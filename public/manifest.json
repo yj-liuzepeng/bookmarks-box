@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "bookmarks-box",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "提高对书签的便捷管理，支持对书签的增删改查",
   "background": {
     "service_worker": "background.js"
@@ -33,7 +33,6 @@
     }
   ],
   "permissions": [
-    "activeTab",
     "bookmarks",
     "tabs"
   ]

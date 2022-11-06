@@ -36,7 +36,6 @@ const manifest: ManifestType = {
     },
   ],
   permissions: [
-    "activeTab",
     "bookmarks",
     "tabs"
   ],
