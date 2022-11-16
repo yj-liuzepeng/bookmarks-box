@@ -316,7 +316,7 @@ const Popup: React.FC = () => {
                   alt='网站'
                   size="default"
                 >
-                  <Img src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : 'https://liuzepeng.com/web.png'} />
+                  <Img src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : './web.png'} />
                 </Avatar>
               }
             />

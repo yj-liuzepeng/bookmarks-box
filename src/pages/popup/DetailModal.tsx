@@ -34,7 +34,7 @@ const DetailModal: React.FC<IProps> = (props: IProps) => {
       setFileData(fileData)
     })
 
-  }, []);
+  }, [isModalOpen]);
   useEffect(() => {
     if (isModalOpen) {
       setPid('')
