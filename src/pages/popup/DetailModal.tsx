@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Modal, Select, Input } from '@douyinfe/semi-ui';
+import folder from '../../assets/img/folder.png'
 interface BookItem {
   id: string;
   parentId: string;
@@ -84,10 +85,11 @@ const DetailModal: React.FC<IProps> = (props: IProps) => {
       >
         <div style={{ marginBottom: '15px' }}>
           <span style={{ paddingRight: '6px' }}>目录:</span>
-          <Select filter style={{ width: 230 }} placeholder='请选择保存到' showClear disabled={!!data.id} defaultValue={data.id}  onChange={selectFile}>
+          <Select filter style={{ width: 230 }} placeholder='请选择保存到' showClear disabled={!!data.id} defaultValue={data.id} onChange={selectFile}>
             {fileData && fileData.map(item => {
               return <Select.Option value={item.id} key={item.id}>
-                <img src="https://liuzepeng.com/folder.png" style={{ width: '15px', height: '15px',verticalAlign: 'middle' }} />{item.title}</Select.Option>
+                <img src={folder} style={{ width: '15px', height: '15px', marginRight: '8px', verticalAlign: 'middle' }} />{item.title}</Select.Option>
+              // <img src="https://liuzepeng.com/folder.png" style={{ width: '15px', height: '15px',verticalAlign: 'middle' }} />{item.title}</Select.Option>
             })
             }
           </Select>
@@ -104,7 +106,7 @@ const DetailModal: React.FC<IProps> = (props: IProps) => {
         {
           !data.id && <div className='no-url'>若不选目录，则默认添加到根目录</div>
         }
-        
+
         <div className='no-url'>若不填网址，则默认新增目录</div>
       </Modal>
     </>

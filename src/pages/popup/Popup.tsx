@@ -6,6 +6,10 @@ import DetailModal from './DetailModal'
 import EditModal from './EditModal'
 import PinyinMatch from 'pinyin-match'
 
+import folder from '../../assets/img/folder.png'
+import web from '../../assets/img/web.png'
+import back from '../../assets/img/back.png'
+
 interface BookItem {
   id: string;
   parentId: string;
@@ -306,8 +310,13 @@ const Popup: React.FC = () => {
                 <Avatar
                   alt='文件夹'
                   size="default"
-                  src='https://liuzepeng.com/folder.png'
+                  src={folder}
                 />
+                // <Avatar
+                //   alt='文件夹'
+                //   size="default"
+                //   src='https://liuzepeng.com/folder.png'
+                // />
               }
             /> : <Meta
               title={item.title}
@@ -316,7 +325,8 @@ const Popup: React.FC = () => {
                   alt='网站'
                   size="default"
                 >
-                  <Img src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : './web.png'} />
+                  <Img src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : web} />
+                  {/* <Img src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : './web.png'} /> */}
                 </Avatar>
               }
             />
@@ -350,8 +360,13 @@ const Popup: React.FC = () => {
                 <Avatar
                   alt='文件夹'
                   size="default"
-                  src='https://liuzepeng.com/folder.png'
+                  src={folder}
                 />
+                // <Avatar
+                //   alt='文件夹'
+                //   size="default"
+                //   src='https://liuzepeng.com/folder.png'
+                // />
               }
             /> : <Meta
               title={item.title}
@@ -360,7 +375,8 @@ const Popup: React.FC = () => {
                   alt='网站'
                   size="default"
                 >
-                  <Img src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : 'https://liuzepeng.com/web.png'} />
+                  <Img src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : web} />
+                  {/* <Img src={isURL(item.url as string) ? ('http://www.google.com/s2/favicons?domain=' + item.url) : 'https://liuzepeng.com/web.png'} /> */}
                 </Avatar>
               }
             />
@@ -405,7 +421,8 @@ const Popup: React.FC = () => {
         </Popover>
       </div>
       {showBack && <div className="back">
-        <img src="https://liuzepeng.com/back%20%282%29.png" onClick={hBack} alt="返回" />
+        <img src={back} onClick={hBack} alt="返回" />
+        {/* <img src="https://liuzepeng.com/back%20%282%29.png" onClick={hBack} alt="返回" /> */}
         <Tag size="large" color={'blue'} className='back-tag' onClick={hBack}><IconFolderOpen /> {curParent.title} </Tag>
       </div>}
       <div className="popup-container">

@@ -4,7 +4,7 @@
  * @Description: file content
  */
 import { ImgHTMLAttributes } from "react";
-
+import web from '../../assets/img/web.png'
 /**
  * 图片占位组件属性
  */
@@ -63,6 +63,8 @@ export default function Img(props: IImagProps<any>) {
 }
 // 设置默认的图片加载中的样式和失败的图片
 Img.defaultProps = {
-  loadingImg: 'https://liuzepeng.com/web.png',
-  errorImg: 'https://liuzepeng.com/web.png'
+  loadingImg: web,
+  errorImg: web
+  // loadingImg: 'https://liuzepeng.com/web.png',
+  // errorImg: 'https://liuzepeng.com/web.png'
 }

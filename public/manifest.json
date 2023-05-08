@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "bookmarks-box",
-  "version": "1.0.1",
+  "version": "1.2.3",
   "description": "提高对书签的便捷管理，支持对书签的增删改查",
   "background": {
     "service_worker": "background.js"
