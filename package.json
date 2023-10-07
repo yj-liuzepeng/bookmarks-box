@@ -1,7 +1,7 @@
 {
   "name": "bookmarks-box",
   "private": true,
-  "version": "1.2.3",
+  "version": "null",
   "type": "module",
   "description": "提高对书签的便捷管理，支持对书签的增删改查",
   "scripts": {
@@ -15,7 +15,7 @@
     "@popperjs/core": "^2.11.6",
     "array-move": "^4.0.0",
     "path": "^0.12.7",
-    "pinyin-match": "^1.2.3",
+    "pinyin-match": "^null",
     "react": "^18.2.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.2.0",

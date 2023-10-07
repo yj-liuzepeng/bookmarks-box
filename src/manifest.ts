@@ -10,7 +10,9 @@ const manifest: ManifestType = {
   name: packageJson.name,
   version: packageJson.version,
   description: packageJson.description,
-  background: { service_worker: "background.js" },
+  background: { 
+    service_worker: "background.js"
+  },
   action: {
     default_popup: "src/pages/popup/index.html",
     default_icon: {
@@ -38,7 +40,7 @@ const manifest: ManifestType = {
   permissions: [
     "bookmarks",
     "tabs"
-  ],
+  ], 
 };
 
 export default manifest;
