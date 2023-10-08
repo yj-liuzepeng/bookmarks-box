@@ -47,6 +47,7 @@ const Popup: React.FC = () => {
   const [curParent, setCurParent] = useState({} as BookItem);
   const [patchAry, setPatchAry] = useState([] as BookItem[]);
   const [bsvisible, setBsvisible] = useState(false);
+  const [isSearch, setIsSearch] = useState(false);
   const cardRef = useRef(null);
   const searchRef = useRef<HTMLInputElement>(null);
   let saveTreeData: BookItem[];
@@ -259,7 +260,9 @@ const Popup: React.FC = () => {
   };
   // 搜索
   const onSearch = (value: string) => {
+    setIsSearch(true);
     setShowBack(false);
+    setPatchAry([] as BookItem[]);
     if (value) {
       setSearchStatus(true);
       chrome.bookmarks.getTree((res: any) => {
@@ -280,6 +283,7 @@ const Popup: React.FC = () => {
   // 清除搜索
   const onClear = () => {
     setPatchAry([] as BookItem[]);
+    setIsSearch(false);
   };
   // 点击卡片
   const hClickItem = (item: any) => {
@@ -297,6 +301,14 @@ const Popup: React.FC = () => {
   };
   // 返回
   const hBack = () => {
+    if(isSearch) {
+      onSearch(searchRef.current?.value as string);
+      setShowBack(false);
+      setIsSearch(true);
+      setCurParent({} as BookItem);
+      setPatchAry([] as BookItem[]);
+      return
+    }
     chrome.bookmarks.getSubTree(curParent.parentId, (res) => {
       setBookmark(res[0].children as BookItem[]);
     });
