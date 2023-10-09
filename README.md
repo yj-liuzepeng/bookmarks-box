@@ -7,4 +7,4 @@
 
 相关说明： https://www.liuzepeng.com/detail?id=149
 
-安装体验：https://chrome.google.com/webstore/detail/bookmarks-box/jlmpmfklkbjmfkhpbeioamcflogkpgfc?hl=zh-CN
+安装体验：https://chrome.google.com/webstore/detail/bookmarks-box/efohdkbdbgghhlaeaookdcegghdninjl?hl=zh-CN
