@@ -1,14 +1,23 @@
 body {
-  background: #f1efef;
+  // 保持轻背景
+  background: #f6f7fb;
   #root {
     width: 300px;
     height: 400px;
     margin: 20px;
     margin-bottom: 50px;
+    // 移除白底卡片容器感，保持轻量
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
     .popup-header {
-      margin-bottom: 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       .header-button {
-        margin-left: 20px;
+        margin-left: 8px;
         border-radius: 50%;
       }
     }
@@ -17,14 +26,14 @@ body {
       img {
         width: 22px;
         height: 22px;
-        margin-right: 4px;
+        margin-right: 6px;
         vertical-align: middle;
         cursor: pointer;
       }
       .back-tag {
         &:hover {
-          color: rgb(80, 79, 79);
-          background: #cfd5e6;
+          color: #1f2937;
+          background: #eef3ff;
         }
         .semi-icon-default {
           font-size: 14px;
@@ -37,53 +46,101 @@ body {
     .popup-container {
       width: 100%;
       height: 95%;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
       align-content: flex-start;
-      overflow: scroll;
+      overflow: auto;
+      padding-bottom: 6px;
       &::-webkit-scrollbar {
         display: none;
       }
       .bookmark-item-search {
-        width: 98%;
-        height: 42px;
-        margin-bottom: 12px;
-        line-height: 42px;
+        width: 100%;
+        height: 44px;
+        line-height: 44px;
+        grid-column: 1 / -1; // 搜索/子目录使用单列
       }
       .bookmark-item {
-        width: 46%;
-        height: 42px;
-        margin-bottom: 12px;
-        line-height: 42px;
+        width: 100%;
+        height: 44px;
+        line-height: 44px;
       }
+      // 外层容器加圆角并裁切，避免内外不一致
+      .bookmark-item,
+      .bookmark-item-search {
+        border-radius: 10px;
+        overflow: hidden;
+        &.semi-card {
+          background: transparent;
+          box-shadow: none;
+          border: none;
+        }
+      }
+      // 让内层 body 跟随外层圆角
+      .bookmark-item .semi-card-body,
+      .bookmark-item-search .semi-card-body {
+        border-radius: inherit;
+      }
+      // 卡片风格：去边框感，轻阴影
       .semi-card-body {
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        transition: all 0.15s ease-in-out;
+        height: 100%;
+        box-sizing: border-box; // 确保上下边框可见，不被父容器裁切
         &:hover {
-          .semi-card-meta-wrapper-title {
-            color: #3b6094;
-          }
+          background: #f9fafb;
+          border-color: #d1d5db;
         }
       }
       .semi-card-meta-avatar {
-        margin-right: 0;
+        margin-right: 6px;
+        margin-left: 4px;
       }
       .semi-avatar-grey {
         background-color: #fff;
       }
-      .semi-avatar > img {
-        width: 55%;
-        height: 55%;
+      // 选中时让头像背景与选中底色一致
+      .bookmark-item.selected .semi-avatar,
+      .bookmark-item-search.selected .semi-avatar,
+      .bookmark-item.selected .semi-avatar-grey,
+      .bookmark-item-search.selected .semi-avatar-grey {
+        background-color: #eff6ff !important;
       }
+
+      // 选中态：弱化轮廓，改为轻底色+细边
+      .bookmark-item.selected,
+      .bookmark-item-search.selected {
+        outline: none;
+        box-shadow: none;
+        border-radius: 10px;
+      }
+      .bookmark-item.selected .semi-card-body,
+      .bookmark-item-search.selected .semi-card-body {
+        background-color: #eff6ff; // 淡蓝底
+        border-color: #bfdbfe; // 细边
+        box-shadow: inset 2px 0 0 0 #3b82f6; // 左侧强调条
+      }
+
+      // 文本与图标
       .semi-card-meta-wrapper {
-        width: 70%;
+        flex: 1 1 auto;
+        min-width: 0; // 关键：允许在 flex 布局中收缩，配合 overflow 实现省略号
+        overflow: hidden;
       }
       .semi-card-meta-wrapper-title {
         font-size: 14px;
         font-weight: 500;
-        color: #3a4759;
+        color: #1f2937;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+      }
+      .semi-avatar > img {
+        width: 56%;
+        height: 56%;
       }
     }
   }
@@ -102,13 +159,16 @@ body {
 }
 }
 .semi-backtop {
-  right: 0px;
+  right: 8px;
 }
 .bottom-sheet {
   .bottom-sheet-btns {
     width: 100%;
     display: flex;
     justify-content: space-around;
+    gap: 12px;
+    height: 100%;
+    box-sizing: border-box; // 保证上下边框不被父容器裁切
   }
 }
 

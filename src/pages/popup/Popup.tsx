@@ -50,6 +50,14 @@ const Popup: React.FC = () => {
   const [isSearch, setIsSearch] = useState(false);
   const cardRef = useRef(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  // 当前键盘选中的索引
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  // 列表容器引用，用于滚动到可见区域
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  // 返回时用于定位到进入前所在的目录项
+  const selectedIndexStackRef = useRef<number[]>([]);
+  // 下一次数据集变更后需要应用的选中索引（否则默认回到0）
+  const pendingSelectIndexRef = useRef<number | null>(null);
   let saveTreeData: BookItem[];
 
   useEffect(() => {
@@ -59,11 +67,112 @@ const Popup: React.FC = () => {
       setBookmark(saveTreeData);
     });
   }, []);
+
+  // 当数据集变化时，重置或修正选中项
+  useEffect(() => {
+    if (!bookmark) return;
+    if (pendingSelectIndexRef.current !== null) {
+      const next = Math.max(0, Math.min(bookmark.length - 1, pendingSelectIndexRef.current));
+      setSelectedIndex(next);
+      pendingSelectIndexRef.current = null;
+    } else {
+      // 默认回到第一项
+      setSelectedIndex(0);
+    }
+  }, [bookmark]);
+
+  // 选中项变化时，滚动到可见区域
+  useEffect(() => {
+    const listItems = containerRef.current?.querySelectorAll(
+      ".bookmark-item, .bookmark-item-search"
+    );
+    if (!listItems || !listItems.length) return;
+    const el = listItems[selectedIndex] as HTMLElement;
+    if (el) {
+      el.scrollIntoView({ block: "nearest", inline: "nearest" });
+    }
+  }, [selectedIndex]);
+
+  // 键盘导航：箭头移动选中项；回车打开/进入
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key;
+      // 目标元素（某些组件可能将事件绑定在包装元素上）
+      const target = (e.target as HTMLElement) || (document.activeElement as HTMLElement);
+      const activeEl = (document.activeElement as HTMLElement) || target;
+      const isEditable =
+        activeEl?.tagName === "INPUT" ||
+        activeEl?.tagName === "TEXTAREA" ||
+        activeEl?.getAttribute("contenteditable") === "true";
+
+      // 处理回车打开/进入
+      if (key === "Enter") {
+        if (bookmark.length && selectedIndex >= 0 && selectedIndex < bookmark.length) {
+          e.preventDefault();
+          hClickItem(bookmark[selectedIndex]);
+        }
+        return;
+      }
+
+      // 当显示返回按钮时，优先处理左方向键为“返回上级”的逻辑
+      if (key === "ArrowLeft" && showBack) {
+        // 如果在输入框内：当光标在最左侧（或无内容）时才触发返回，否则保持默认光标移动
+        if (isEditable) {
+          const inputEl = activeEl as HTMLInputElement;
+          const val = (inputEl?.value ?? "");
+          const caret = typeof inputEl?.selectionStart === "number" ? (inputEl.selectionStart as number) : 0;
+          if (val.length > 0 && caret > 0) {
+            // 有内容且光标不在最左，保留默认行为
+            return;
+          }
+        }
+        // 按住键盘会产生重复的 keydown 事件，避免一次按下返回多级
+        if (e.repeat) {
+          e.preventDefault();
+          return;
+        }
+        e.preventDefault();
+        hBack();
+        return;
+      }
+
+      // 在输入框中：
+      // - 右：若输入为空，则用于列表导航；若有内容，保留默认光标移动
+      // - 上/下：用于列表导航
+      if (isEditable) {
+        if (key === "ArrowRight") {
+          const inputEl = activeEl as HTMLInputElement;
+          if (inputEl && (inputEl.value ?? "").trim() !== "") {
+            return; // 有输入内容，保留默认行为
+          }
+          // 否则继续向下执行为列表导航
+        }
+      }
+
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(key)) {
+        if (!bookmark.length) return;
+        e.preventDefault();
+        const cols = searchStatus ? 1 : 2; // 首页两列，搜索/子目录一列
+        setSelectedIndex((prev) => {
+          let next = prev ?? 0;
+          if (key === "ArrowUp") next = Math.max(0, next - cols);
+          if (key === "ArrowDown") next = Math.min(bookmark.length - 1, next + cols);
+          if (key === "ArrowLeft") next = Math.max(0, next - 1);
+          if (key === "ArrowRight") next = Math.min(bookmark.length - 1, next + 1);
+          return next;
+        });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [bookmark, searchStatus, selectedIndex, showBack]);
+
   // 右键点击卡片
   const clickRight = (item: BookItem) => {
     // 屏蔽浏览器默认右键事件
     document.oncontextmenu = function (e) {
-      e = e || window.event;
+      e = e || (window as any).event;
       return false;
     };
     setCurEditData(item);
@@ -73,6 +182,7 @@ const Popup: React.FC = () => {
   const bsChange = () => {
     setBsvisible(!bsvisible);
   };
+
   // 关闭新增
   const hClose = () => {
     setDetailModalshow(false);
@@ -82,15 +192,27 @@ const Popup: React.FC = () => {
     setDetailModalshow(true);
   };
 
-  // 关闭修改
-  const hCloseEdit = () => {
+  // 修改保存
+  const hSave = (title: string | undefined, url: string | undefined) => {
+    const obj = {
+      title,
+      url,
+    };
+    chrome.bookmarks.update(curEditData.id, obj, (res) => {
+      getChangeView();
+    });
+    hCancel();
+  };
+  // 修改取消
+  const hCancel = () => {
+    setCurEditData({} as BookItem);
     setEditlModalshow(false);
   };
-  // 点击修改
   const hOpenEdit = () => {
     bsChange();
     setEditlModalshow(true);
   };
+
   // 删除
   const hDelect = () => {
     bsChange();
@@ -190,21 +312,7 @@ const Popup: React.FC = () => {
       });
     }
   };
-  // 修改保存
-  const hSave = (title: string | undefined, url: string | undefined) => {
-    const obj = {
-      title,
-      url,
-    };
-    chrome.bookmarks.update(curEditData.id, obj, (res) => {
-      getChangeView();
-    });
-    hCloseEdit();
-  };
-  // 取消修改
-  const hCancel = () => {
-    hCloseEdit();
-  };
+
   // 新增保存
   const hSaveAdd = (
     parentId: string | undefined,
@@ -224,6 +332,7 @@ const Popup: React.FC = () => {
     });
     hClose();
   };
+
   // 新增取消
   const hCancelAdd = () => {
     hClose();
@@ -247,7 +356,7 @@ const Popup: React.FC = () => {
   }
   // 树形数据拍平
   const getListData = (data: BookItem[]) => {
-    if (!data.length) return false;
+    if (!data.length) return false as any;
     let needList: any = [];
     dfs(data);
     return needList;
@@ -263,6 +372,7 @@ const Popup: React.FC = () => {
     setIsSearch(true);
     setShowBack(false);
     setPatchAry([] as BookItem[]);
+    selectedIndexStackRef.current = [];
     if (value) {
       setSearchStatus(true);
       chrome.bookmarks.getTree((res: any) => {
@@ -270,12 +380,14 @@ const Popup: React.FC = () => {
           getListData(res[0].children[0].children),
           value
         );
+        pendingSelectIndexRef.current = 0;
         setBookmark(dataList);
       });
     } else {
       setSearchStatus(false);
       chrome.bookmarks.getTree((res: any) => {
         saveTreeData = res[0].children[0].children;
+        pendingSelectIndexRef.current = 0;
         setBookmark(saveTreeData);
       });
     }
@@ -288,6 +400,11 @@ const Popup: React.FC = () => {
   // 点击卡片
   const hClickItem = (item: any) => {
     if (item.children) {
+      // 进入目录前，记录当前所在的索引，返回时用于定位
+      selectedIndexStackRef.current.push(selectedIndex);
+      // 进入新目录后，选中第一项
+      pendingSelectIndexRef.current = 0;
+
       setSearchStatus(true);
       setCurParent(item);
       setPatchAry([...patchAry.concat(item)]);
@@ -307,22 +424,36 @@ const Popup: React.FC = () => {
       setIsSearch(true);
       setCurParent({} as BookItem);
       setPatchAry([] as BookItem[]);
+      selectedIndexStackRef.current = [];
+      pendingSelectIndexRef.current = 0;
       return
     }
-    chrome.bookmarks.getSubTree(curParent.parentId, (res) => {
-      setBookmark(res[0].children as BookItem[]);
-    });
+    
     if (curParent.parentId == "1") {
+      // 回到首页
+      const prevIndex = selectedIndexStackRef.current.pop() ?? 0;
+      pendingSelectIndexRef.current = prevIndex;
       setSearchStatus(false);
       setShowBack(false);
       setCurParent({} as BookItem);
       setPatchAry([] as BookItem[]);
+      chrome.bookmarks.getTree((res: any) => {
+        const saveTreeData = res[0].children[0].children;
+        setBookmark(saveTreeData);
+      });
     } else {
-      setSearchStatus(true);
-      patchAry.pop();
-      setPatchAry([...patchAry]);
+      // 回到上一级目录
+      const newPatchAry = [...patchAry];
+      newPatchAry.pop();
+      setPatchAry(newPatchAry);
+      const prevIndex = selectedIndexStackRef.current.pop() ?? 0;
+      pendingSelectIndexRef.current = prevIndex;
+      
       chrome.bookmarks.get(curParent.parentId, (res: any) => {
         setCurParent(res[0]);
+        chrome.bookmarks.getSubTree(curParent.parentId, (subRes) => {
+          setBookmark(subRes[0].children as BookItem[]);
+        });
       });
     }
   };
@@ -330,12 +461,12 @@ const Popup: React.FC = () => {
   if (!searchStatus) {
     Content =
       bookmark.length > 0 &&
-      bookmark.map((item: BookItem) => {
+      bookmark.map((item: BookItem, idx: number) => {
         return (
           <Card
             key={item.id}
             shadows="hover"
-            className="bookmark-item"
+            className={`bookmark-item ${selectedIndex === idx ? "selected" : ""}`}
             bodyStyle={{
               padding: 0,
               fontWeight: 400,
@@ -380,12 +511,12 @@ const Popup: React.FC = () => {
   } else {
     Content =
       bookmark.length > 0 &&
-      bookmark.map((item: BookItem) => {
+      bookmark.map((item: BookItem, idx: number) => {
         return (
           <Card
             key={item.id}
             shadows="hover"
-            className="bookmark-item-search"
+            className={`bookmark-item-search ${selectedIndex === idx ? "selected" : ""}`}
             bodyStyle={{
               padding: 0,
               fontWeight: 400,
@@ -429,7 +560,7 @@ const Popup: React.FC = () => {
       });
   }
   const style = {
-    display: "flex",
+    display: "flex" as const,
     alignItems: "center",
     justifyContent: "center",
     height: 30,
@@ -470,7 +601,7 @@ const Popup: React.FC = () => {
           />
         </Popover>
       </div>
-      {showBack && (
+      {showBack && patchAry.length > 0 && (
         <div className="back">
           <img src={back} onClick={hBack} alt="返回" />
           <Tag size="large" color={"blue"} className="back-tag">
@@ -482,29 +613,25 @@ const Popup: React.FC = () => {
                     ? item.title.length > 8
                       ? `${item.title.slice(0, 8)}...`
                       : item.title
-                    : ` / ${
-                        item.title.length > 8
-                          ? item.title.slice(0, 8) + "..."
-                          : item.title
-                      }`
+                    : ` / ${item.title.length > 8 ? item.title.slice(0, 8) + "..." : item.title}`
                 )}
               </span>
             ) : (
               <span>
-                {patchAry[0].title.length > 18
-                  ? `${patchAry[0].title.slice(0, 18)}...`
-                  : patchAry[0].title}
+                {(patchAry[0]?.title?.length ?? 0) > 18
+                  ? `${(patchAry[0]?.title ?? "").slice(0, 18)}...`
+                  : (patchAry[0]?.title ?? "")}
               </span>
             )}
           </Tag>
         </div>
       )}
-      <div className="popup-container">
+      <div className="popup-container" ref={containerRef}>
         {Content}
         <BackTop
           visibilityHeight={100}
           style={style}
-          target={() => document.querySelector(".popup-container")}
+          target={() => document.querySelector(".popup-container") as HTMLElement}
         >
           <IconArrowUp />
         </BackTop>
